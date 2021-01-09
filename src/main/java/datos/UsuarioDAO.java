@@ -2,31 +2,28 @@
 package datos;
 
 import static datos.Conexion.*;
-import domain.Persona;
+import domain.Usuario;
 import java.sql.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 
-
-public class PersonaDAO {
+public class UsuarioDAO {
     
-    private static final String SQL_SELECT = "SELECT id_persona, nombre, apellido, email, telefono FROM persona";
+    private static final String SQL_SELECT = "SELECT id_usuario, usuario, password FROM usuario";
     
-    private static final String SQL_INSERT = "INSERT INTO persona(nombre, apellido, email, telefono) VALUES(?, ?, ?, ?);";
+    private static final String SQL_INSERT = "INSERT INTO usuario(usuario, password) VALUES(?, ?);";
     
-    private static final String SQL_UPDATE = "UPDATE persona SET nombre = ?, apellido = ?, email = ?, telefono = ? WHERE id_persona = ?";
+    private static final String SQL_UPDATE = "UPDATE usuario SET usuario = ?, password = ? WHERE id_usuario = ?";
     
-    private static final String SQL_DELETE = "DELETE FROM persona WHERE id_persona = ?";
+    private static final String SQL_DELETE = "DELETE FROM usuario WHERE id_usuario = ?";
     
-    public List<Persona> seleccionar(){
+    public List<Usuario> seleccionar(){
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        Persona persona = null;
-        List<Persona> personas = new ArrayList<>();
+        Usuario user = null;
+        List<Usuario> usuarios = new ArrayList<>();
         
         try {
             conn = getConnection(); //Conexion a la base de datos
@@ -34,15 +31,14 @@ public class PersonaDAO {
             rs = stmt.executeQuery();//ejecucion de query
             
             while(rs.next()){//obtencion de cada elemento de la tabla
-                int idPersona = rs.getInt("id_persona");
-                String nombre = rs.getString("nombre");
-                String apellido = rs.getString("apellido");
-                String email = rs.getString("email");
-                String telefono = rs.getString("telefono");
+                int idUsuario = rs.getInt("id_usuario");
+                String usuario = rs.getString("usuario");
+                String password = rs.getString("password");
                 
-                persona = new Persona(idPersona, nombre, apellido, email, telefono);//almacenamiento de objeto en una variable
                 
-                personas.add(persona);//agregado de objeto al arraylist de objetos
+                user = new Usuario(idUsuario, usuario, password);//almacenamiento de objeto en una variable
+                
+                usuarios.add(user);//agregado de objeto al arraylist de objetos
             }
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
@@ -57,20 +53,19 @@ public class PersonaDAO {
             }
             
         }
-        return personas;
+        return usuarios;
     }
     
-    public int insertar(Persona persona){
+    public int insertar(Usuario usuario){
         Connection conn = null;
         PreparedStatement stmt = null;
         int registros = 0;
         try {
             conn = getConnection();
             stmt = conn.prepareStatement(SQL_INSERT);
-            stmt.setString(1, persona.getNombre());
-            stmt.setString(2, persona.getApellido());
-            stmt.setString(3, persona.getEmail());
-            stmt.setString(4, persona.getTelefono());
+            stmt.setString(1, usuario.getUsuario());
+            stmt.setString(2, usuario.getPassword());
+         
             
             registros = stmt.executeUpdate();
             
@@ -88,18 +83,16 @@ public class PersonaDAO {
         return registros;
     }
     
-    public int actualizar(Persona persona){
+    public int actualizar(Usuario usuario){
         Connection conn = null;
         PreparedStatement stmt = null;
         int registros = 0;
         try {
             conn = getConnection();
             stmt = conn.prepareStatement(SQL_UPDATE);
-            stmt.setString(1, persona.getNombre());
-            stmt.setString(2, persona.getApellido());
-            stmt.setString(3, persona.getEmail());
-            stmt.setString(4, persona.getTelefono());
-            stmt.setInt(5, persona.getIdPersona());
+            stmt.setString(1, usuario.getUsuario());
+            stmt.setString(2, usuario.getPassword());
+            stmt.setInt(3, usuario.getIdUsuario());
             
             registros = stmt.executeUpdate();
             
@@ -117,7 +110,7 @@ public class PersonaDAO {
         return registros;
     }
     
-      public int eliminar(Persona persona){
+      public int eliminar(Usuario usuario){
         Connection conn = null;
         PreparedStatement stmt = null;
         int registros = 0;
@@ -125,7 +118,7 @@ public class PersonaDAO {
             conn = getConnection();
             stmt = conn.prepareStatement(SQL_DELETE);
             
-            stmt.setInt(1, persona.getIdPersona());
+            stmt.setInt(1, usuario.getIdUsuario());
             
             registros = stmt.executeUpdate();
             
